@@ -11,7 +11,6 @@ export default function Layout({children, modal}: Props) {
             Before Login 레이아웃
             {children}
             {modal}
-            {/*패러렐 라우트, @붙은 디렉토리 요소 */}
         </div>
     )
 }
