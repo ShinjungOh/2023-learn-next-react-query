@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {useSelectedLayoutSegment} from "next/navigation";
 import Link from "next/link";

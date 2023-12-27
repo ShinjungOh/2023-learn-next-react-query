@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import style from './followRecommend.module.css';
 

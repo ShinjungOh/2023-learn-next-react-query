@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {useRouter} from "next/navigation";
 import Main from "@/app/(beforeLogin)/_component/Main";
