@@ -22,7 +22,6 @@
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    background-color: wheat;
 }
 
 .leftSectionFixed nav {
@@ -83,7 +82,6 @@
     width: 990px;
     display: flex;
     justify-content: space-between;
-    background-color: deepskyblue;
 }
 
 .main {
@@ -94,7 +92,6 @@
 .rightSection {
     width: 350px;
     height: 100%;
-    background-color: red;
 }
 
 .search {
