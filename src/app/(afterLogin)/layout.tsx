@@ -6,12 +6,14 @@ import NavMenu from "@/app/(afterLogin)/_component/NavMenu";
 import LogoutButton from "@/app/(afterLogin)/_component/LogoutButton";
 import TrendSection from "@/app/(afterLogin)/_component/TrendSection";
 import FollowRecommend from "@/app/(afterLogin)/_component/FollowRecommend";
+import {ReactNode} from "react";
 
 type Props = {
-    children: React.ReactNode
+    children: ReactNode,
+    modal: ReactNode
 }
 
-export default async function HomeLayout({children}: Props) {
+export default async function HomeLayout({children, modal}: Props) {
     return (
         <div className={style.container}>
             <header className={style.leftSectionWrapper}>
@@ -57,6 +59,7 @@ export default async function HomeLayout({children}: Props) {
                     </section>
                 </div>
             </div>
+            {modal}
         </div>
     )
 }
