@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
 import ActionButtons from "@/app/(afterLogin)/_component/ActionButtons";
+import PostArticle from "@/app/(afterLogin)/_component/PostArticle";
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime);
@@ -18,10 +19,11 @@ export default function Post() {
         content: '트위터 클론코딩하기',
         createdAt: new Date(),
         Image: [],
+        postId: 1
     }
 
     return (
-        <article className={style.post}>
+        <PostArticle post={target}>
             <div className={style.postWrapper}>
                 <div className={style.postUserSection}>
                     <Link href={`/${target.User.id}`} className={style.postUserImage}>
@@ -49,9 +51,9 @@ export default function Post() {
                             </div>
                         )}
                     </div>
-                    <ActionButtons />
+                    <ActionButtons/>
                 </div>
             </div>
-        </article>
-    )
+        </PostArticle>
+    );
 }
