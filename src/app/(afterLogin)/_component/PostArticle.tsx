@@ -14,7 +14,7 @@ type Props = {
         },
         content: string,
         createdAt: Date,
-        Image: any[],
+        Images: any[],
         postId: number
     }
 }
