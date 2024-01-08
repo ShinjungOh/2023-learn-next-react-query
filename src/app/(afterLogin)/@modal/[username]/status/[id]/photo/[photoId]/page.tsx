@@ -28,7 +28,7 @@ export default function Default() {
                 </div>
             </div>
             <div className={style.commentZone}>
-                <Post/>
+                <Post noImage />
                 <CommentForm/>
                 <Post/>
                 <Post/>
