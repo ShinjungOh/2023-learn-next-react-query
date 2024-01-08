@@ -7,7 +7,6 @@ import ActionButtons from "@/app/(afterLogin)/_component/ActionButtons";
 import PostArticle from "@/app/(afterLogin)/_component/PostArticle";
 import {faker} from "@faker-js/faker";
 
-
 dayjs.locale('ko');
 dayjs.extend(relativeTime);
 
