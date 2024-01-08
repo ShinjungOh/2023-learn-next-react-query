@@ -3,6 +3,7 @@
 import style from "@/app/(afterLogin)/messages/message.module.css";
 import {faker} from "@faker-js/faker";
 import dayjs from "dayjs";
+import "dayjs/locale/ko";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {useRouter} from "next/navigation";
 
@@ -17,7 +18,7 @@ export default function Room() {
         nickname: '김이박',
         Messages: [
             {roomId: 123, content: '안녕하세요.', createdAt: new Date()},
-            {roomId: 123, content: '안녕하세요.', createdAt: new Date()},
+            {roomId: 123, content: '안녕히계세요.', createdAt: new Date()},
         ]
     }
 
@@ -39,7 +40,7 @@ export default function Room() {
                     •
                     &nbsp;
                     <span className={style.postDate}>
-                        {dayjs(user.Messages?.at(-1).createdAt).fromNow()}
+                        {dayjs(user.Messages?.at(-1).createdAt).fromNow(true)}
                     </span>
                 </div>
                 <div className={style.roomLastChat}>
