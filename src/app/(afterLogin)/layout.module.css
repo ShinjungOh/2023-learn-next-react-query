@@ -12,7 +12,7 @@
 }
 
 .leftSection {
-    width: 275px;
+    width: 72px;
     height: 100dvh;
 }
 
@@ -20,8 +20,21 @@
     position: fixed;
     width: inherit;
     height: 100dvh;
+    padding: 0 8px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+
+@media all and (min-width: 1300px) {
+    .leftSection {
+        width: 275px;
+        height: 100dvh;
+    }
+
+    .leftSectionFixed {
+        align-items: flex-start;
+    }
 }
 
 .leftSectionFixed nav {
@@ -54,19 +67,55 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 52px;
     box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 28px;
     background-color: rgb(29, 155, 240);
-    width: 234px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
     border: none;
     color: rgb(255, 255, 255);
     font-weight: 700;
     font-size: 17px;
-    border-radius: 26px;
 }
 
 .postButton:hover {
     background-color: rgb(26, 140, 216);
+}
+
+.postButton span {
+    display: none;
+}
+
+.postButton svg {
+    display: inline-block;
+    fill: white;
+    width: 24px;
+}
+
+@media all and (min-width: 1300px) {
+    .postButton {
+        margin: 16px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 52px;
+        box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 28px;
+        background-color: rgb(29, 155, 240);
+        width: 234px;
+        border: none;
+        color: rgb(255, 255, 255);
+        font-weight: 700;
+        font-size: 17px;
+        border-radius: 26px;
+    }
+
+    .postButton span {
+        display: inline-block;
+    }
+
+    .postButton svg {
+        display: none;
+    }
 }
 
 .rightSectionWrapper {
@@ -77,21 +126,32 @@
     flex-grow: 1;
 }
 
+.rightSection {
+    display: none;
+}
+
 .rightSectionInner {
     height: 100%;
-    width: 990px;
+    width: 600px;
     display: flex;
     justify-content: space-between;
+}
+
+@media all and (min-width: 1024px) {
+    .rightSection {
+        display: inline-block;
+        width: 350px;
+        height: 100%;
+    }
+
+    .rightSectionInner {
+        width: 990px;
+    }
 }
 
 .main {
     width: 600px;
     height: 200dvh;
-}
-
-.rightSection {
-    width: 350px;
-    height: 100%;
 }
 
 .followRecommend {
