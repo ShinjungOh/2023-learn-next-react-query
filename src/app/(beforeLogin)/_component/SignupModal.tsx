@@ -20,7 +20,7 @@ export default function SignupModal() {
 
        let shouldRedirect = false;
        try {
-           const response: Response = await fetch(`${process.env.NEXT_PUBLIC}/api/users`, {
+           const response: Response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users`, {
                method: 'post',
                body: formData,
                credentials: 'include',
