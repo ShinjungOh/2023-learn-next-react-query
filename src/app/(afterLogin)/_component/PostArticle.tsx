@@ -19,8 +19,6 @@ type Props = {
     }
 }
 
-export const addddss = 1;
-
 export default function PostArticle({children, post}: Props) {
     const router = useRouter();
 

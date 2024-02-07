@@ -1,8 +1,8 @@
 "use client";
 
-import style from './signup.module.css';
+import style from "./signup.module.css";
 import { useFormState, useFormStatus } from "react-dom";
-import onSubmit from '../_lib/signup';
+import onSubmit from "../_lib/signup";
 import BackButton from "@/app/(afterLogin)/_component/BackButton";
 
 export default function SignupModal() {
