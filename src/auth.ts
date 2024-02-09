@@ -30,7 +30,12 @@ export const {
 
             const user = await authResponse.json()
 
-            return user
+            return {
+                email: user.id,
+                name: user.nickname,
+                image: user.image,
+                ...user,
+            }
         },
     }),
     ]
