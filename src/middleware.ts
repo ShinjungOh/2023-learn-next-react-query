@@ -9,5 +9,5 @@ export async function middleware() {
 }
 
 export const config = {
-    matchers: ['/compost/tweet', '/home', 'explore', 'messages', '/search'],
+    matcher: ['/compose/tweet', '/home', '/explore', '/messages', '/search'],
 }
