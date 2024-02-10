@@ -8,6 +8,7 @@ import LogoutButton from "@/app/(afterLogin)/_component/LogoutButton";
 import TrendSection from "@/app/(afterLogin)/_component/TrendSection";
 import FollowRecommend from "@/app/(afterLogin)/_component/FollowRecommend";
 import RightSearchZone from "@/app/(afterLogin)/_component/RightSearchZone";
+import RQProvider from "@/app/(afterLogin)/_component/RQProvider";
 import {auth} from "@/auth";
 
 type Props = {
@@ -51,21 +52,23 @@ export default async function HomeLayout({children, modal}: Props) {
                     </div>
                 </section>
             </header>
-            <div className={style.rightSectionWrapper}>
-                <div className={style.rightSectionInner}>
-                    <main className={style.main}>{children}</main>
-                    <section className={style.rightSection}>
-                        <RightSearchZone/>
-                        <TrendSection/>
-                        <div className={style.followRecommend}>
-                            <h3>팔로우 추천</h3>
-                            <FollowRecommend/>
-                            <FollowRecommend/>
-                            <FollowRecommend/>
-                        </div>
-                    </section>
+            <RQProvider>
+                <div className={style.rightSectionWrapper}>
+                    <div className={style.rightSectionInner}>
+                        <main className={style.main}>{children}</main>
+                        <section className={style.rightSection}>
+                            <RightSearchZone/>
+                            <TrendSection/>
+                            <div className={style.followRecommend}>
+                                <h3>팔로우 추천</h3>
+                                <FollowRecommend/>
+                                <FollowRecommend/>
+                                <FollowRecommend/>
+                            </div>
+                        </section>
+                    </div>
                 </div>
-            </div>
+            </RQProvider>
             {modal}
         </div>
     )
