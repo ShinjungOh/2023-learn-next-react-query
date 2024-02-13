@@ -171,7 +171,6 @@ export const handlers = [
                     content: `${2} 검색결과 ${tag}`,
                     Images: [
                         {imageId: 1, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 2, link: faker.image.urlLoremFlickr()},
                     ],
                     createdAt: generateDate(),
                 },
@@ -188,9 +187,6 @@ export const handlers = [
                     content: `${4} 검색결과 ${tag}`,
                     Images: [
                         {imageId: 1, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 2, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 3, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 4, link: faker.image.urlLoremFlickr()},
                     ],
                     createdAt: generateDate(),
                 },
@@ -200,12 +196,142 @@ export const handlers = [
                     content: `${5} 검색결과 ${tag}`,
                     Images: [
                         {imageId: 1, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 2, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 3, link: faker.image.urlLoremFlickr()},
                     ],
                     createdAt: generateDate(),
                 },
             ]
         )
     }),
+    http.get('/api/users/:userId/posts', async ({request, params}) => {
+        const {userId} = params;
+        return HttpResponse.json(
+            [
+                {
+                    postId: 1,
+                    User: User[0],
+                    content: `${1} 검색결과 ${userId}의 게시글`,
+                    Images: [{imageId: 1, link: faker.image.urlLoremFlickr()}],
+                    createdAt: generateDate(),
+                },
+                {
+                    postId: 2,
+                    User: User[0],
+                    content: `${2} 검색결과 ${userId}의 게시글`,
+                    Images: [
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
+                    ],
+                    createdAt: generateDate(),
+                },
+                {
+                    postId: 3,
+                    User: User[0],
+                    content: `${3} 검색결과 ${userId}의 게시글`,
+                    Images: [],
+                    createdAt: generateDate(),
+                },
+                {
+                    postId: 4,
+                    User: User[0],
+                    content: `${4} 검색결과 ${userId}의 게시글`,
+                    Images: [
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
+                    ],
+                    createdAt: generateDate(),
+                },
+                {
+                    postId: 5,
+                    User: User[0],
+                    content: `${5} 검색결과 ${userId}의 게시글`,
+                    Images: [
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
+                    ],
+                    createdAt: generateDate(),
+                },
+            ]
+        )
+    }),
+    http.get('/api/users/:userId', async ({request, params}) => {
+        const {userId} = params;
+        return HttpResponse.json(
+                User[1]
+        );
+    }),
+    http.get('/api/users/:userId/posts/:postId', async ({request, params}) => {
+        const {userId, postId} = params;
+        return HttpResponse.json(
+            {
+                postId: 1,
+                User: User[0],
+                content: `${1} 검색결과 ${userId}의 게시글 ${postId}의 내용`,
+                Images: [{imageId: 1, link: faker.image.urlLoremFlickr()}],
+                createdAt: generateDate(),
+            }
+        );
+    }),
+    http.get('/api/users/:userId/posts/:postId/comments', async ({request, params}) => {
+        const {userId, postId} = params;
+        return HttpResponse.json(
+            [
+                {
+                    postId: 1,
+                    User: User[0],
+                    content: `${1} 검색결과 ${userId}의 게시글 ${postId}의 답글`,
+                    Images: [{imageId: 1, link: faker.image.urlLoremFlickr()}],
+                    createdAt: generateDate(),
+                },
+                {
+                    postId: 2,
+                    User: User[0],
+                    content: `${2} 검색결과 ${userId}의 게시글 ${postId}의 답글`,
+                    Images: [
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
+                    ],
+                    createdAt: generateDate(),
+                },
+                {
+                    postId: 3,
+                    User: User[0],
+                    content: `${3} 검색결과 ${userId}의 게시글 ${postId}의 답글`,
+                    Images: [],
+                    createdAt: generateDate(),
+                },
+                {
+                    postId: 4,
+                    User: User[0],
+                    content: `${4} 검색결과 ${userId}의 게시글 ${postId}의 답글`,
+                    Images: [
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
+                    ],
+                    createdAt: generateDate(),
+                },
+                {
+                    postId: 5,
+                    User: User[0],
+                    content: `${5} 검색결과 ${userId}의 게시글 ${postId}의 답글`,
+                    Images: [
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
+                    ],
+                    createdAt: generateDate(),
+                },
+            ]
+        )
+    }),
+    http.get('/api/followRecommends', ({request}) => {
+        return HttpResponse.json(User);
+    }),
+    http.get('/api/trends', ({request}) => {
+        return HttpResponse.json(
+            [
+                {tagId: 1, title: '하나', count: 1264},
+                {tagId: 2, title: '둘', count: 1264},
+                {tagId: 3, title: '셋', count: 1264},
+                {tagId: 4, title: '넷', count: 1264},
+                {tagId: 5, title: '다섯', count: 1264},
+                {tagId: 6, title: '여섯', count: 1264},
+                {tagId: 7, title: '일곱', count: 1264},
+                {tagId: 8, title: '여덟', count: 1264},
+                {tagId: 9, title: '아홉', count: 1264},
+            ]
+        )
+    })
 ];

@@ -1,15 +1,14 @@
 "use client";
 
 import style from './followRecommend.module.css';
+import {User} from "@/model/User";
 
-export default function FollowRecommend() {
-    const onFollw = () => {
-    }
+type Props = {
+    user: User
+}
 
-    const user = {
-        id: 'elonmusk',
-        nickname: 'E.M',
-        image: '/yRsRRjGO.jpg'
+export default function FollowRecommend({user}: Props) {
+    const onFollow = () => {
     }
 
     return (
@@ -24,7 +23,7 @@ export default function FollowRecommend() {
                 <div className={style.count}>@{user.id}</div>
             </div>
             <div className={style.followButtonSection}>
-                <button onClick={onFollw}>팔로우</button>
+                <button onClick={onFollow}>팔로우</button>
             </div>
         </div>
     );
