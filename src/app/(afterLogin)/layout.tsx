@@ -29,7 +29,7 @@ export default async function HomeLayout({children, modal}: Props) {
                                 <Image src={ZLogo} alt="z.com logo" width={40} height={40}/>
                             </div>
                         </Link>
-                        { session?.user && (
+                        {session?.user && (
                             <>
                                 <nav>
                                     <ul>
@@ -66,8 +66,8 @@ export default async function HomeLayout({children, modal}: Props) {
                         </section>
                     </div>
                 </div>
+                {modal}
             </RQProvider>
-            {modal}
         </div>
     )
 }

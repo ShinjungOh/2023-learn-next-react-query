@@ -2,10 +2,18 @@
 
 import style from './commentForm.module.css';
 import {useRef, useState} from "react";
+import {useQueryClient} from "@tanstack/react-query";
 
-export default function CommentForm() {
+type Props = {
+    id: string;
+}
+
+export default function CommentForm({id}: Props) {
     const [content, setContent] = useState('');
     const imageRef = useRef<HTMLInputElement>(null);
+
+    const queryClient = useQueryClient();
+    const post = queryClient.getQueryData(['posts', id]);
 
     const onClickButton = () => {
     }
@@ -19,6 +27,12 @@ export default function CommentForm() {
     const me = {
         id: 'shinjung',
         image: '/myProfile.jpg'
+    }
+
+    console.log('post', post, id);
+
+    if (!post) {
+        return null;
     }
 
     return (
