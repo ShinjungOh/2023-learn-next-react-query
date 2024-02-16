@@ -9,7 +9,7 @@ export default function NavMenu() {
     console.log(segment);
 
     const me = { // 임시 내 프로필
-        id: 'sj'
+        id: 'shinjung'
     }
 
     return (

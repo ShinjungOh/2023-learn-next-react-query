@@ -18,7 +18,7 @@ export default function ChatRoom() {
     }
 
     const messages = [
-        {messageId: 1, roomId: 123, id: 'sj', content: '안녕하세요.', createdAt: new Date()},
+        {messageId: 1, roomId: 123, id: 'shinjung', content: '안녕하세요.', createdAt: new Date()},
         {messageId: 2, roomId: 123, id: 'kim', content: '안녕히계세요.', createdAt: new Date()},
     ]
 
@@ -35,7 +35,7 @@ export default function ChatRoom() {
             </Link>
             <div className={style.list}>
                 {messages.map((m) => {
-                    if (m.id === 'sj') { // 내 메시지일 때
+                    if (m.id === 'shinjung') { // 내 메시지일 때
                         return (
                             <div
                                 key={m.messageId}

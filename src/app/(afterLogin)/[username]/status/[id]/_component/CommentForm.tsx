@@ -17,7 +17,7 @@ export default function CommentForm() {
     }
 
     const me = {
-        id: 'sj',
+        id: 'shinjung',
         image: '/myProfile.jpg'
     }
 

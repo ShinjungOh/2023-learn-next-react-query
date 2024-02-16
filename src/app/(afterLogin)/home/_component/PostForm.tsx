@@ -8,7 +8,7 @@ export default function PostForm() {
     const [content, setContent] = useState('');
 
     const me = {
-        id: 'sj',
+        id: 'shinjung',
         image: '/myProfile.jpg'
     }
 

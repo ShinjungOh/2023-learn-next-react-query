@@ -20,7 +20,7 @@ export default function TweetModal() {
     }
 
     const me = {
-        id: 'sj',
+        id: 'shinjung',
         image: '/myProfile.jpg'
     }
 
