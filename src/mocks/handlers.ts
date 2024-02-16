@@ -18,12 +18,8 @@ const User = [
 
 export const handlers = [
     http.post('/api/login', () => {
-        return HttpResponse.json({
-            userId: 1,
-            nickname: 'SJ',
-            id: 'shinjung',
-            image: '/myProfile.jpg',
-        }, {
+        console.log('로그인');
+        return HttpResponse.json(User[1], {
             headers: {
                 'Set-Cookie': 'connect.sid=msw-cookie;HttpOnly;Path=/'
             }
