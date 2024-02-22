@@ -23,14 +23,14 @@ export default function PostRecommends() {
     });
     const {ref, inView} = useInView({
         threshold: 0,
-        delay: 300
+        delay: 300,
     });
 
     useEffect(() => {
         if (inView) {
             !isFetching && hasNextPage && fetchNextPage();
         }
-    }, [inView, isFetching, hasNextPage, fetchNextPage])
+    }, [inView, isFetching, hasNextPage, fetchNextPage]);
 
     return (
         <>

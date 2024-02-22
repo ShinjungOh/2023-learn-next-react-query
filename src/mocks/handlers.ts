@@ -100,52 +100,54 @@ export const handlers = [
         )
     }),
     http.get('/api/followingPosts', async ({request}) => {
+        const url = new URL(request.url);
+        const cursor = parseInt(url.searchParams.get('cursor') as string) || 0;
         return HttpResponse.json(
             [
                 {
-                    postId: 1,
+                    postId: cursor + 1,
                     User: User[0],
-                    content: `${1} Stop following me. I'm too famous.`,
+                    content: `${cursor + 1} Stop following me. I'm too famous.`,
                     Images: [{imageId: 1, link: faker.image.urlLoremFlickr()}],
                     createdAt: generateDate(),
                 },
                 {
-                    postId: 2,
+                    postId: cursor + 2,
                     User: User[0],
-                    content: `${2} Stop following me. I'm too famous.`,
+                    content: `${cursor + 2} Stop following me. I'm too famous.`,
                     Images: [
                         {imageId: 1, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 2, link: faker.image.urlLoremFlickr()},
+                        {imageId: 2, link: faker.image.urlLoremFlickr()},
                     ],
                     createdAt: generateDate(),
                 },
                 {
-                    postId: 3,
+                    postId: cursor + 3,
                     User: User[0],
-                    content: `${3} Stop following me. I'm too famous.`,
+                    content: `${cursor + 3} Stop following me. I'm too famous.`,
                     Images: [],
                     createdAt: generateDate(),
                 },
                 {
-                    postId: 4,
+                    postId: cursor + 4,
                     User: User[0],
-                    content: `${4} Stop following me. I'm too famous.`,
+                    content: `${cursor + 4} Stop following me. I'm too famous.`,
                     Images: [
                         {imageId: 1, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 2, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 3, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 4, link: faker.image.urlLoremFlickr()},
+                        {imageId: 2, link: faker.image.urlLoremFlickr()},
+                        {imageId: 3, link: faker.image.urlLoremFlickr()},
+                        {imageId: 4, link: faker.image.urlLoremFlickr()},
                     ],
                     createdAt: generateDate(),
                 },
                 {
-                    postId: 5,
+                    postId: cursor + 5,
                     User: User[0],
-                    content: `${5} Stop following me. I'm too famous.`,
+                    content: `${cursor + 5} Stop following me. I'm too famous.`,
                     Images: [
                         {imageId: 1, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 2, link: faker.image.urlLoremFlickr()},
-                        // {imageId: 3, link: faker.image.urlLoremFlickr()},
+                        {imageId: 2, link: faker.image.urlLoremFlickr()},
+                        {imageId: 3, link: faker.image.urlLoremFlickr()},
                     ],
                     createdAt: generateDate(),
                 },
@@ -154,45 +156,55 @@ export const handlers = [
     }),
     http.get('/api/search/:tag', ({request, params}) => {
         const {tag} = params;
+        const url = new URL(request.url);
+        const cursor = parseInt(url.searchParams.get('cursor') as string) || 0;
         return HttpResponse.json(
             [
                 {
-                    postId: 1,
+                    postId: cursor + 1,
                     User: User[0],
-                    content: `${1} 검색결과 ${tag}`,
-                    Images: [{imageId: 1, link: faker.image.urlLoremFlickr()}],
+                    content: `${cursor + 1} 검색결과 ${tag}`,
+                    Images: [
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
+                        {imageId: 1, link: faker.image.urlLoremFlickr()}
+                    ],
                     createdAt: generateDate(),
                 },
                 {
-                    postId: 2,
+                    postId: cursor + 2,
                     User: User[0],
-                    content: `${2} 검색결과 ${tag}`,
+                    content: `${cursor + 2} 검색결과 ${tag}`,
                     Images: [
                         {imageId: 1, link: faker.image.urlLoremFlickr()},
                     ],
                     createdAt: generateDate(),
                 },
                 {
-                    postId: 3,
+                    postId: cursor + 3,
                     User: User[0],
-                    content: `${3} 검색결과 ${tag}`,
+                    content: `${cursor + 3} 검색결과 ${tag}`,
                     Images: [],
                     createdAt: generateDate(),
                 },
                 {
-                    postId: 4,
+                    postId: cursor + 4,
                     User: User[0],
-                    content: `${4} 검색결과 ${tag}`,
+                    content: `${cursor + 4} 검색결과 ${tag}`,
                     Images: [
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
                         {imageId: 1, link: faker.image.urlLoremFlickr()},
                     ],
                     createdAt: generateDate(),
                 },
                 {
-                    postId: 5,
+                    postId: cursor + 5,
                     User: User[0],
-                    content: `${5} 검색결과 ${tag}`,
+                    content: `${cursor + 5} 검색결과 ${tag}`,
                     Images: [
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
+                        {imageId: 1, link: faker.image.urlLoremFlickr()},
                         {imageId: 1, link: faker.image.urlLoremFlickr()},
                     ],
                     createdAt: generateDate(),

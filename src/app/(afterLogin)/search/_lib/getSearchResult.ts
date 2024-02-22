@@ -1,13 +1,29 @@
 import {QueryFunction} from "@tanstack/query-core";
 import {Post} from "@/model/Post";
 
-export const getSearchResult: QueryFunction<Post[], [_1: string, _2: string, searchParams: { q: string, f?: string, pf?: string, }]>
-    = async ({queryKey}) => {
-    const [_1, _2, searchParams] = queryKey;
+type Props = {
+    queryKey: [
+        _1: string,
+        _2: string,
+        searchParams: {
+            q: string,
+            f?: string,
+            pf?: string,
+        }
+    ],
+    pageParam?: number;
+}
 
-    const res = await fetch(`http://localhost:9090/api/search/${searchParams.q}?${searchParams.toString()}`, {
+export const getSearchResult: QueryFunction<Post[], [_1: string, _2: string, searchParams: {
+    q: string,
+    f?: string,
+    pf?: string,
+}]> = async ({queryKey, pageParam}: Props) => {
+    const [_1, _2, searchParams] = queryKey;
+    const queryParams = new URLSearchParams(searchParams as any).toString();
+    const res = await fetch(`http://localhost:9090/api/search/${searchParams.q}?${queryParams}&cursor=${pageParam}`, {
         next: {
-            tags: ['post', 'search', searchParams.q], // 객체가 들어갈 수 없음. 문자열 넣어줘야 함
+            tags: ['posts', 'search', searchParams.q], // 객체가 들어갈 수 없음. 문자열 넣어줘야 함
         },
         cache: 'no-store',
     })
