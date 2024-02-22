@@ -15,8 +15,6 @@ export default async function Home() {
     });
     const dehydratedState = dehydrate(queryClient);
 
-    queryClient.getQueryData(['posts', 'recommends']);
-
     return (
         <main className={style.main}>
             <HydrationBoundary state={dehydratedState}>

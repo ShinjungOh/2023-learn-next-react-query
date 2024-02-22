@@ -16,6 +16,10 @@ const User = [
     {id: 'leoturtle', nickname: '레오', image: faker.image.avatar()},
 ];
 
+const delay = (ms: number) => new Promise((res, rej) => {
+    setTimeout(res, ms);
+})
+
 export const handlers = [
     http.post('/api/login', () => {
         console.log('로그인');
@@ -45,6 +49,7 @@ export const handlers = [
         })
     }),
     http.get('/api/postRecommends', async ({request}) => {
+        await delay(3000);
         const url = new URL(request.url);
         const cursor = parseInt(url.searchParams.get('cursor') as string) || 0;
         return HttpResponse.json(
@@ -100,6 +105,7 @@ export const handlers = [
         )
     }),
     http.get('/api/followingPosts', async ({request}) => {
+        await delay(3000);
         const url = new URL(request.url);
         const cursor = parseInt(url.searchParams.get('cursor') as string) || 0;
         return HttpResponse.json(
