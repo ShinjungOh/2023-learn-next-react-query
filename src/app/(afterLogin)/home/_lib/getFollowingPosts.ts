@@ -3,7 +3,7 @@ type Props = {
 }
 
 export async function getFollowingPosts({pageParam}: Props) {
-    const res = await fetch(`http://localhost:9090/api/followingPosts?cursor=${pageParam}`, {
+    const res = await fetch(`http://localhost:9090/api/posts/followings?cursor=${pageParam}`, {
         next: {
             tags: ['posts', 'followings'],
         },

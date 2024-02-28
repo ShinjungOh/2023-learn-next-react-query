@@ -46,7 +46,7 @@ export default async function HomeLayout({children, modal}: Props) {
                                         </svg>
                                     </Link>
                                 </nav>
-                                <LogoutButton/>
+                                <LogoutButton me={session}/>
                             </>
                         )}
                     </div>
