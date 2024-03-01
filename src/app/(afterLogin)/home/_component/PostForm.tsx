@@ -4,7 +4,8 @@ import style from './postForm.module.css';
 import {ChangeEventHandler, FormEventHandler, useRef, useState} from "react";
 import {Session} from "@auth/core/types";
 import TextareaAutosize from 'react-textarea-autosize';
-import {reader} from "next/dist/experimental/testmode/fetch";
+import {useQueryClient} from "@tanstack/react-query";
+import {Post} from "@/model/Post";
 
 type Props = {
     me: Session | null
@@ -14,6 +15,7 @@ export default function PostForm({me}: Props) {
     const imageRef = useRef<HTMLInputElement>(null);
     const [preview, setPreview] = useState<Array<{ dataUrl: string, file: File } | null>>([]);
     const [content, setContent] = useState('');
+    const queryClient = useQueryClient();
 
     const onChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
         setContent(e.target.value);
@@ -26,19 +28,47 @@ export default function PostForm({me}: Props) {
         preview.forEach((p) => {
             p && formData.append('images', p.file);
         })
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
+                method: 'post',
+                credentials: 'include',
+                body: formData
+            });
 
-        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
-            method: 'post',
-            credentials: 'include',
-            body: formData
-        })
+            if (response.status === 201) {
+                setContent('');
+                setPreview([]);
+                const newPost = await response.json();
+                queryClient.setQueryData(['posts', 'recommends'], (prevData: { pages: Post[][] }) => {
+                    const shallow = {
+                        ...prevData,
+                        pages: [...prevData.pages],
+                    }
+                    shallow.pages[0] = [...shallow.pages[0]];
+                    prevData.pages[0].unshift(newPost);
+                    return shallow;
+                });
+                queryClient.setQueryData(['posts', 'followings'], (prevData: { pages: Post[][] }) => {
+                    const shallow = {
+                        ...prevData,
+                        pages: [...prevData.pages],
+                    }
+                    shallow.pages[0] = [...shallow.pages[0]];
+                    prevData.pages[0].unshift(newPost);
+                    return shallow;
+                });
+            }
+        } catch (e) {
+            console.error(e);
+            alert('게시물을 작성하는 중에 문제가 발생했습니다.');
+        }
     }
 
     const onClickButton = () => {
         imageRef.current?.click();
     }
 
-    const onRemoveImage = (index: number) => {
+    const onRemoveImage = (index: number) => () => {
         setPreview((prevPreview) => {
             const prev = [...prevPreview];
             prev[index] = null;
@@ -61,7 +91,7 @@ export default function PostForm({me}: Props) {
                         return prev;
                     })
                 }
-                reader.readAsDataURL(file)
+                reader.readAsDataURL(file);
             });
         }
     }
@@ -81,7 +111,8 @@ export default function PostForm({me}: Props) {
                             <div key={index} style={{flex: 1}}
                                  onClick={onRemoveImage(index)}>
                                 <img src={v.dataUrl} alt="미리보기"
-                                     style={{width: '100%', objectFit: 'contain', maxHeight: 100}}/>
+                                     style={{width: '100%', objectFit: 'contain', maxHeight: 100}}
+                                />
                             </div>
                         )
                     ))}
