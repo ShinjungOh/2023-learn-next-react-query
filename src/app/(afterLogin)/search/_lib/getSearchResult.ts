@@ -21,10 +21,11 @@ export const getSearchResult: QueryFunction<Post[], [_1: string, _2: string, sea
 }]> = async ({queryKey, pageParam}: Props) => {
     const [_1, _2, searchParams] = queryKey;
     const queryParams = new URLSearchParams(searchParams as any).toString();
-    const res = await fetch(`http://localhost:9090/api/search/${searchParams.q}?${queryParams}&cursor=${pageParam}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts?${queryParams}&cursor=${pageParam}`, {
         next: {
             tags: ['posts', 'search', searchParams.q], // 객체가 들어갈 수 없음. 문자열 넣어줘야 함
         },
+        credentials: 'include',
         cache: 'no-store',
     })
 
