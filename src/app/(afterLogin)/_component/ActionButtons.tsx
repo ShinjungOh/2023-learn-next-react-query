@@ -31,12 +31,159 @@ export default function ActionButtons({white, post}: Props) {
             const queryCache = queryClient.getQueryCache();
             const queryKeys = queryCache.getAll().map(cache => cache.queryKey);
             console.log(queryKeys);
+            queryKeys.forEach((queryKey) => {
+                if (queryKey[0] === 'posts') {
+                    console.log(queryKey[0]);
+                    const value: Post | InfiniteData<Post[]> | undefined = queryClient.getQueryData(queryKey);
+                    if (value && 'pages' in value) {
+                        console.log('array', value);
+                        const obj = value.pages.flat().find((v) => v.postId === postId); // 2차원 배열이라 flat
+                        if (obj) { // 존재 확인
+                            const pageIndex = value.pages.findIndex((page) => page.includes(obj));
+                            const index = value.pages[pageIndex].findIndex((v) => v.postId === postId);
+                            console.log('found index', index);
+                            const shallow = {...value};
+                            value.pages = {...value.pages};
+                            value.pages[pageIndex] = [...value.pages[pageIndex]];
+                            shallow.pages[pageIndex][index] = {
+                                ...shallow.pages[pageIndex][index],
+                                Hearts: [{userId: session?.user?.email as string}],
+                                _count: {
+                                    ...shallow.pages[pageIndex][index]._count,
+                                    Hearts: shallow.pages[pageIndex][index]._count.Hearts + 1,
+                                }
+                            }
+                            queryClient.setQueryData(queryKey, shallow);
+                        }
+                    } else if (value) {
+                        // 싱글 포스트인 경우
+                        if (value.postId === postId) {
+                            const shallow = {
+                                ...value,
+                                Hearts: [{userId: session?.user?.email as string}],
+                                _count: {
+                                    ...value._count,
+                                    Hearts: value._count.Hearts + 1,
+                                }
+                            }
+                            queryClient.setQueryData(queryKey, shallow);
+                        }
+                    }
+                }
+            })
+        },
+        onError() {
+            const queryCache = queryClient.getQueryCache();
+            const queryKeys = queryCache.getAll().map(cache => cache.queryKey);
+            console.log(queryKeys);
+            queryKeys.forEach((queryKey) => {
+                if (queryKey[0] === 'posts') {
+                    const value: Post | InfiniteData<Post[]> | undefined = queryClient.getQueryData(queryKey);
+                    if (value && 'pages' in value) {
+                        console.log('array', value);
+                        const obj = value.pages.flat().find((v) => v.postId === postId); // 2차원 배열이라 flat
+                        if (obj) { // 존재 확인
+                            const pageIndex = value.pages.findIndex((page) => page.includes(obj));
+                            const index = value.pages[pageIndex].findIndex((v) => v.postId === postId);
+                            console.log('found index', index);
+                            const shallow = {...value};
+                            value.pages = {...value.pages};
+                            value.pages[pageIndex] = [...value.pages[pageIndex]];
+                            shallow.pages[pageIndex][index] = {
+                                ...shallow.pages[pageIndex][index],
+                                Hearts: shallow.pages[pageIndex][index].Hearts.filter((v) => v.userId !== session?.user?.email),
+                                _count: {
+                                    ...shallow.pages[pageIndex][index]._count,
+                                    Hearts: shallow.pages[pageIndex][index]._count.Hearts - 1,
+                                }
+                            }
+                            queryClient.setQueryData(queryKey, shallow);
+                        }
+                    } else if (value) {
+                        // 싱글 포스트인 경우
+                        if (value.postId === postId) {
+                            const shallow = {
+                                ...value,
+                                Hearts: value.Hearts.filter((v) => v.userId !== session?.user?.email),
+                                _count: {
+                                    ...value._count,
+                                    Hearts: value._count.Hearts - 1,
+                                }
+                            }
+                            queryClient.setQueryData(queryKey, shallow);
+                        }
+                    }
+                }
+            })
+        },
+        onSettled() {
+            // queryClient.invalidateQueries({
+            //     queryKey: ['post'] // post로 시작하는 key들이 업데이트
+            // });
+        }
+    });
+
+    const unHeart = useMutation({
+        mutationFn: () => {
+            return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${postId}/heart`, {
+                method: 'delete',
+                credentials: 'include',
+            });
+        },
+        onMutate() {
+            const queryCache = queryClient.getQueryCache();
+            const queryKeys = queryCache.getAll().map(cache => cache.queryKey);
+            console.log('queryKeys', queryKeys);
+            queryKeys.forEach((queryKey) => {
+                if (queryKey[0] === 'posts') {
+                    const value: Post | InfiniteData<Post[]> | undefined = queryClient.getQueryData(queryKey);
+                    if (value && 'pages' in value) {
+                        console.log('array', value);
+                        const obj = value.pages.flat().find((v) => v.postId === postId); // 2차원 배열이라 flat
+                        if (obj) { // 존재 확인
+                            const pageIndex = value.pages.findIndex((page) => page.includes(obj));
+                            const index = value.pages[pageIndex].findIndex((v) => v.postId === postId);
+                            console.log('found index', index);
+                            const shallow = {...value};
+                            value.pages = {...value.pages};
+                            value.pages[pageIndex] = [...value.pages[pageIndex]];
+                            shallow.pages[pageIndex][index] = {
+                                ...shallow.pages[pageIndex][index],
+                                Hearts: shallow.pages[pageIndex][index].Hearts.filter((v) => v.userId !== session?.user?.email),
+                                _count: {
+                                    ...shallow.pages[pageIndex][index]._count,
+                                    Hearts: shallow.pages[pageIndex][index]._count.Hearts - 1,
+                                }
+                            }
+                            queryClient.setQueryData(queryKey, shallow);
+                        }
+                    } else if (value) {
+                        // 싱글 포스트인 경우
+                        if (value.postId === postId) {
+                            const shallow = {
+                                ...value,
+                                Hearts: value.Hearts.filter((v) => v.userId !== session?.user?.email),
+                                _count: {
+                                    ...value._count,
+                                    Hearts: value._count.Hearts - 1,
+                                }
+                            }
+                            queryClient.setQueryData(queryKey, shallow);
+                        }
+                    }
+                }
+            })
+        },
+        onError() {
+            const queryCache = queryClient.getQueryCache();
+            const queryKeys = queryCache.getAll().map(cache => cache.queryKey);
+            console.log(queryKeys);
             queryKeys.forEach((querykey) => {
                 if (querykey[0] === 'posts') {
                     const value: Post | InfiniteData<Post[]> | undefined = queryClient.getQueryData(querykey);
                     if (value && 'pages' in value) {
                         console.log('array', value);
-                        const obj = value.pages.flat().findIndex((v) => v.postId === postId); // 2차원 배열이라 flat
+                        const obj = value.pages.flat().find((v) => v.postId === postId); // 2차원 배열이라 flat
                         if (obj) { // 존재 확인
                             const pageIndex = value.pages.findIndex((page) => page.includes(obj));
                             const index = value.pages[pageIndex].findIndex((v) => v.postId === postId);
@@ -67,73 +214,9 @@ export default function ActionButtons({white, post}: Props) {
                             }
                             queryClient.setQueryData(querykey, shallow);
                         }
-
                     }
                 }
             })
-        },
-        onError() {
-
-        },
-        onSettled() {
-
-        }
-    });
-
-    const unHeart = useMutation({
-        mutationFn: () => {
-            return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${postId}/heart`, {
-                method: 'delete',
-                credentials: 'include',
-            });
-        },
-        onMutate() {
-            const queryCache = queryClient.getQueryCache();
-            const queryKeys = queryCache.getAll().map(cache => cache.queryKey);
-            console.log(queryKeys);
-            queryKeys.forEach((querykey) => {
-                if (querykey[0] === 'posts') {
-                    const value: Post | InfiniteData<Post[]> | undefined = queryClient.getQueryData(querykey);
-                    if (value && 'pages' in value) {
-                        console.log('array', value);
-                        const obj = value.pages.flat().findIndex((v) => v.postId === postId); // 2차원 배열이라 flat
-                        if (obj) { // 존재 확인
-                            const pageIndex = value.pages.findIndex((page) => page.includes(obj));
-                            const index = value.pages[pageIndex].findIndex((v) => v.postId === postId);
-                            console.log('found index', index);
-                            const shallow = {...value};
-                            value.pages = {...value.pages};
-                            value.pages[pageIndex] = [...value.pages[pageIndex]];
-                            shallow.pages[pageIndex][index] = {
-                                ...shallow.pages[pageIndex][index],
-                                Hearts: shallow.pages[pageIndex][index].Hearts.filter((v) => v.userId !== session?.user?.email),
-                                _count: {
-                                    ...shallow.pages[pageIndex][index]._count,
-                                    Hearts: shallow.pages[pageIndex][index]._count.Hearts - 1,
-                                }
-                            }
-                            queryClient.setQueryData(querykey, shallow);
-                        }
-                    } else if (value) {
-                        // 싱글 포스트인 경우
-                        if (value.postId === postId) {
-                            const shallow = {
-                                ...value,
-                                Hearts: value.Hearts.filter((v) => v.userId !== session?.user?.email),
-                                _count: {
-                                    ...value._count,
-                                    Hearts: value._count.Hearts - 1,
-                                }
-                            }
-                            queryClient.setQueryData(querykey, shallow);
-                        }
-
-                    }
-                }
-            })
-        },
-        onError() {
-
         },
         onSettled() {
 
