@@ -3,21 +3,22 @@
 import style from './post.module.css';
 import cx from 'classnames';
 import {MouseEventHandler} from "react";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {InfiniteData, useMutation, useQueryClient} from "@tanstack/react-query";
 import {Post} from "@/model/Post";
 import {useSession} from "next-auth/react";
 
 type Props = {
     white?: boolean;
-    postId: number;
+    post: Post;
 }
 
-export default function ActionButtons({white, postId}: Props) {
+export default function ActionButtons({white, post}: Props) {
     const queryClient = useQueryClient();
-    const session = useSession();
-    const commented = false;
-    const reposted = false;
-    const liked = false;
+    const {data: session} = useSession();
+    const commented = !!post.Comments.find((v) => v.userId === session?.user?.email);
+    const reposted = !!post.Reposts.find((v) => v.userId === session?.user?.email);
+    const liked = !!post.Hearts.find((v) => v.userId === session?.user?.email);
+    const {postId} = post;
 
     const heart = useMutation({
         mutationFn: () => {
@@ -73,6 +74,60 @@ export default function ActionButtons({white, postId}: Props) {
         }
     });
 
+    const unHeart = useMutation({
+        mutationFn: () => {
+            return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${postId}/heart`, {
+                method: 'delete',
+                credentials: 'include',
+            });
+        },
+        onMutate() {
+            const queryCache = queryClient.getQueryCache();
+            const queryKeys = queryCache.getAll().map(cache => cache.queryKey);
+            console.log(queryKeys);
+            queryKeys.forEach((querykey) => {
+                if (querykey[0] === 'posts') {
+                    const value: Post | Post[] | undefined = queryClient.getQueryData(querykey);
+                    if (Array.isArray(value)) {
+                        const index = value.findIndex((v) => v.postId === postId);
+                        if (index > -1) {
+                            const shallow = [...value];
+                            shallow[index] = {
+                                ...shallow[index],
+                                Hearts: shallow[index].Hearts.filter((v) => v.userId !== session?.user?.email),
+                                _count: {
+                                    ...shallow[index]._count,
+                                    Hearts: shallow[index]._count.Hearts - 1,
+                                }
+                            }
+                            queryClient.setQueryData(querykey, shallow);
+                        }
+                    } else if (value) {
+                        // 싱글 포스트인 경우
+                        if (value.postId === postId) {
+                            const shallow = {
+                                ...value,
+                                Hearts: value.Hearts.filter((v) => v.userId !== session?.user?.email),
+                                _count: {
+                                    ...value._count,
+                                    Hearts: value._count.Hearts - 1,
+                                }
+                            }
+                            queryClient.setQueryData(querykey, shallow);
+                        }
+
+                    }
+                }
+            })
+        },
+        onError() {
+
+        },
+        onSettled() {
+
+        }
+    });
+
     const onCLickComment = () => {
     }
 
@@ -82,7 +137,7 @@ export default function ActionButtons({white, postId}: Props) {
     const onClickHeart: MouseEventHandler<HTMLButtonElement> = (e) => {
         e.stopPropagation();
         if (liked) {
-            // unheart.mutate();
+            unHeart.mutate();
         } else {
             heart.mutate();
         }
@@ -99,7 +154,7 @@ export default function ActionButtons({white, postId}: Props) {
                         </g>
                     </svg>
                 </button>
-                <div className={style.count}>{1 || ''}</div>
+                <div className={style.count}>{post._count.Comments || ''}</div>
             </div>
             <div className={cx(style.repostButton, reposted && style.reposted, white && style.white)}>
                 <button onClick={onClickRepost}>
@@ -110,7 +165,7 @@ export default function ActionButtons({white, postId}: Props) {
                         </g>
                     </svg>
                 </button>
-                <div className={style.count}>{0 || ''}</div>
+                <div className={style.count}>{post._count.Reposts || ''}</div>
             </div>
             <div className={cx([style.heartButton, liked && style.liked, white && style.white])}>
                 <button onClick={onClickHeart}>
@@ -121,7 +176,7 @@ export default function ActionButtons({white, postId}: Props) {
                         </g>
                     </svg>
                 </button>
-                <div className={style.count}>{1 || ''}</div>
+                <div className={style.count}>{post._count.Hearts || ''}</div>
             </div>
         </div>
     )
