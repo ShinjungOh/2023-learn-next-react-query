@@ -15,9 +15,9 @@ type Props = {
 export default function ActionButtons({white, post}: Props) {
     const queryClient = useQueryClient();
     const {data: session} = useSession();
-    const commented = !!post.Comments.find((v) => v.userId === session?.user?.email);
-    const reposted = !!post.Reposts.find((v) => v.userId === session?.user?.email);
-    const liked = !!post.Hearts.find((v) => v.userId === session?.user?.email);
+    const commented = !!post.Comments?.find((v) => v.userId === session?.user?.email);
+    const reposted = !!post.Reposts?.find((v) => v.userId === session?.user?.email);
+    const liked = !!post.Hearts?.find((v) => v.userId === session?.user?.email);
     const {postId} = post;
 
     const heart = useMutation({
@@ -33,17 +33,23 @@ export default function ActionButtons({white, post}: Props) {
             console.log(queryKeys);
             queryKeys.forEach((querykey) => {
                 if (querykey[0] === 'posts') {
-                    const value: Post | Post[] | undefined = queryClient.getQueryData(querykey);
-                    if (Array.isArray(value)) {
-                        const index = value.findIndex((v) => v.postId === postId);
-                        if (index > -1) {
-                            const shallow = [...value];
-                            shallow[index] = {
-                                ...shallow[index],
-                                Hearts: [{ userId: session?.user?.email as string}],
+                    const value: Post | InfiniteData<Post[]> | undefined = queryClient.getQueryData(querykey);
+                    if (value && 'pages' in value) {
+                        console.log('array', value);
+                        const obj = value.pages.flat().findIndex((v) => v.postId === postId); // 2차원 배열이라 flat
+                        if (obj) { // 존재 확인
+                            const pageIndex = value.pages.findIndex((page) => page.includes(obj));
+                            const index = value.pages[pageIndex].findIndex((v) => v.postId === postId);
+                            console.log('found index', index);
+                            const shallow = {...value};
+                            value.pages = {...value.pages};
+                            value.pages[pageIndex] = [...value.pages[pageIndex]];
+                            shallow.pages[pageIndex][index] = {
+                                ...shallow.pages[pageIndex][index],
+                                Hearts: [{userId: session?.user?.email as string}],
                                 _count: {
-                                    ...shallow[index]._count,
-                                    Hearts: shallow[index]._count.Hearts + 1,
+                                    ...shallow.pages[pageIndex][index]._count,
+                                    Hearts: shallow.pages[pageIndex][index]._count.Hearts + 1,
                                 }
                             }
                             queryClient.setQueryData(querykey, shallow);
@@ -53,7 +59,7 @@ export default function ActionButtons({white, post}: Props) {
                         if (value.postId === postId) {
                             const shallow = {
                                 ...value,
-                                Hearts: [{ userId: session?.user?.email as string}],
+                                Hearts: [{userId: session?.user?.email as string}],
                                 _count: {
                                     ...value._count,
                                     Hearts: value._count.Hearts + 1,
@@ -87,17 +93,23 @@ export default function ActionButtons({white, post}: Props) {
             console.log(queryKeys);
             queryKeys.forEach((querykey) => {
                 if (querykey[0] === 'posts') {
-                    const value: Post | Post[] | undefined = queryClient.getQueryData(querykey);
-                    if (Array.isArray(value)) {
-                        const index = value.findIndex((v) => v.postId === postId);
-                        if (index > -1) {
-                            const shallow = [...value];
-                            shallow[index] = {
-                                ...shallow[index],
-                                Hearts: shallow[index].Hearts.filter((v) => v.userId !== session?.user?.email),
+                    const value: Post | InfiniteData<Post[]> | undefined = queryClient.getQueryData(querykey);
+                    if (value && 'pages' in value) {
+                        console.log('array', value);
+                        const obj = value.pages.flat().findIndex((v) => v.postId === postId); // 2차원 배열이라 flat
+                        if (obj) { // 존재 확인
+                            const pageIndex = value.pages.findIndex((page) => page.includes(obj));
+                            const index = value.pages[pageIndex].findIndex((v) => v.postId === postId);
+                            console.log('found index', index);
+                            const shallow = {...value};
+                            value.pages = {...value.pages};
+                            value.pages[pageIndex] = [...value.pages[pageIndex]];
+                            shallow.pages[pageIndex][index] = {
+                                ...shallow.pages[pageIndex][index],
+                                Hearts: shallow.pages[pageIndex][index].Hearts.filter((v) => v.userId !== session?.user?.email),
                                 _count: {
-                                    ...shallow[index]._count,
-                                    Hearts: shallow[index]._count.Hearts - 1,
+                                    ...shallow.pages[pageIndex][index]._count,
+                                    Hearts: shallow.pages[pageIndex][index]._count.Hearts - 1,
                                 }
                             }
                             queryClient.setQueryData(querykey, shallow);
