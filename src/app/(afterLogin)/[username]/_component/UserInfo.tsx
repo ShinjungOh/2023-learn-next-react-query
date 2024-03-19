@@ -8,12 +8,14 @@ import {User} from "@/model/User";
 import cx from "classnames";
 import {useSession} from "next-auth/react";
 import {MouseEventHandler} from "react";
+import {Session} from "@auth/core/types";
 
 type Props = {
     username: string;
+    session: Session | null;
 }
 
-export default function UserInfo({username}: Props) {
+export default function UserInfo({username, session}: Props) {
     const {data: user, error} = useQuery<User, Object, User, [_1: string, _2: string]>({
         queryKey: ['users', username],
         queryFn: getUser,
@@ -21,7 +23,6 @@ export default function UserInfo({username}: Props) {
         gcTime: 300 * 1000,
     });
     const queryClient = useQueryClient();
-    const {data: session} = useSession();
 
     const follow = useMutation({
         mutationFn: (userId: string) => {
