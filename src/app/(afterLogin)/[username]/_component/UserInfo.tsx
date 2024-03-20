@@ -6,7 +6,6 @@ import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {getUser} from "@/app/(afterLogin)/[username]/_lib/getUser";
 import {User} from "@/model/User";
 import cx from "classnames";
-import {useSession} from "next-auth/react";
 import {MouseEventHandler} from "react";
 import {Session} from "@auth/core/types";
 
