@@ -223,10 +223,28 @@ export default function ActionButtons({white, post}: Props) {
         }
     });
 
-    const onCLickComment = () => {
+    const onCLickComment: MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.stopPropagation();
+        const formData = new FormData();
+        formData.append('content', '답글 테스트');
+        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/comments`, {
+            method: 'post',
+            body: formData,
+            credentials: 'include',
+        });
     }
 
-    const onClickRepost = () => {
+    const onClickRepost: MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.stopPropagation();
+        if (!reposted) {
+            const formData = new FormData();
+            formData.append('content', '재게시 테스트');
+            fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/reposts`, {
+                method: 'post',
+                body: formData,
+                credentials: 'include',
+            });
+        }
     }
 
     const onClickHeart: MouseEventHandler<HTMLButtonElement> = (e) => {
