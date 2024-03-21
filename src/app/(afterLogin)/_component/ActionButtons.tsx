@@ -6,6 +6,8 @@ import {MouseEventHandler} from "react";
 import {InfiniteData, useMutation, useQueryClient} from "@tanstack/react-query";
 import {Post} from "@/model/Post";
 import {useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
+import {useModalStore} from "@/store/modal";
 
 type Props = {
     white?: boolean;
@@ -15,7 +17,9 @@ type Props = {
 export default function ActionButtons({white, post}: Props) {
     const queryClient = useQueryClient();
     const {data: session} = useSession();
-    const commented = !!post.Comments?.find((v) => v.userId === session?.user?.email);
+    const router = useRouter();
+    const modalStore = useModalStore();
+
     const reposted = !!post.Reposts?.find((v) => v.userId === session?.user?.email);
     const liked = !!post.Hearts?.find((v) => v.userId === session?.user?.email);
     const {postId} = post;
@@ -341,13 +345,9 @@ export default function ActionButtons({white, post}: Props) {
 
     const onCLickComment: MouseEventHandler<HTMLButtonElement> = (e) => {
         e.stopPropagation();
-        const formData = new FormData();
-        formData.append('content', '답글 테스트');
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/comments`, {
-            method: 'post',
-            body: formData,
-            credentials: 'include',
-        });
+        modalStore.setMode('comment');
+        modalStore.setData(post);
+        router.push('/compose/tweet');
     }
 
     const onClickRepost: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -370,7 +370,7 @@ export default function ActionButtons({white, post}: Props) {
 
     return (
         <div className={style.actionButtons}>
-            <div className={cx(style.commentButton, {[style.commented]: commented}, white && style.white)}>
+            <div className={cx(style.commentButton, white && style.white)}>
                 <button onClick={onCLickComment}>
                     <svg width={24} viewBox="0 0 24 24" aria-hidden="true">
                         <g>
