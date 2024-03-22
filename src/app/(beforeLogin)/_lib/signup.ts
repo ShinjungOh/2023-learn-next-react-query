@@ -40,10 +40,11 @@ export default async (prevState: any, formData: FormData) => {
         })
     } catch (err) {
         console.log(err);
-        return;
+        return {message: null};
     }
 
     if (shouldRedirect) {
         redirect('/home'); // try-catch문 안에서 x
     }
+    return {message: null};
 }

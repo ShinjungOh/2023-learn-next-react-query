@@ -5,7 +5,7 @@ import {User} from "@/model/User";
 import {getFollowRecommends} from "@/app/(afterLogin)/_lib/followRecommends";
 import FollowRecommend from "@/app/(afterLogin)/_component/FollowRecommend";
 
-export default function followRecommendSection () {
+export default function FollowRecommendSection() {
     const {data} = useQuery<User[]>({
         queryKey: ['users', 'followRecommends'],
         queryFn: getFollowRecommends,

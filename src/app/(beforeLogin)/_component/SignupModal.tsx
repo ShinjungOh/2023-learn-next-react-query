@@ -1,15 +1,15 @@
 "use client";
 
 import style from "./signup.module.css";
-import { useFormState, useFormStatus } from "react-dom";
+import {useFormState, useFormStatus} from "react-dom";
 import onSubmit from "../_lib/signup";
 import BackButton from "@/app/(afterLogin)/_component/BackButton";
 
 export default function SignupModal() {
     const [state, formAction] = useFormState(onSubmit, {message: null});
-    const { pending } = useFormStatus();
+    const {pending} = useFormStatus();
 
-    const showMessage = (message: string) => {
+    const showMessage = (message: string | null) => {
         if (message === 'no_id') {
             return '아이디를 입력하세요.';
         }
@@ -52,7 +52,8 @@ export default function SignupModal() {
                             </div>
                             <div className={style.inputDiv}>
                                 <label className={style.inputLabel} htmlFor="password">비밀번호</label>
-                                <input id="password" name="password" className={style.input} type="password" placeholder=""
+                                <input id="password" name="password" className={style.input} type="password"
+                                       placeholder=""
                                        required
                                 />
                             </div>

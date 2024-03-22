@@ -40,7 +40,7 @@ export default function Room() {
                     •
                     &nbsp;
                     <span className={style.postDate}>
-                        {dayjs(user.Messages?.at(-1).createdAt).fromNow(true)}
+                        {dayjs(user.Messages?.at(-1)?.createdAt).fromNow(true)}
                     </span>
                 </div>
                 <div className={style.roomLastChat}>
