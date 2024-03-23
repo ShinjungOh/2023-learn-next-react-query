@@ -1,21 +1,32 @@
 import style from "./chatRoom.module.css";
-import {faker} from "@faker-js/faker";
-import Link from "next/link";
-import BackButton from "@/app/(afterLogin)/_component/BackButton";
 import cx from "classnames";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import relativeTime from "dayjs/plugin/relativeTime";
+import MessageForm from "@/app/(afterLogin)/messages/[room]/_component/MessageForm";
+import {getUserServer} from "@/app/(afterLogin)/[username]/_lib/getUserServer";
+import {auth} from "@/auth";
+import {QueryClient} from "@tanstack/react-query";
+import UserInfo from "@/app/(afterLogin)/messages/[room]/_component/UserInfo";
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime)
 
-export default function ChatRoom() {
-    const user = {
-        id: 'kim',
-        nickname: '김이박',
-        Image: faker.image.avatar()
+type Props = {
+    params: { room: string; }
+}
+
+export default async function ChatRoom({params}: Props) {
+    const session = await auth();
+    const queryClient = new QueryClient();
+    const ids = params.room.split('-').filter((v) => v !== session?.user?.email); // 상대방 id
+    if (!ids[0]) {
+        return null;
     }
+    await queryClient.prefetchQuery({
+        queryKey: ['user', ids[0]],
+        queryFn: getUserServer,
+    });
 
     const messages = [
         {messageId: 1, roomId: 123, id: 'shinjung', content: '안녕하세요.', createdAt: new Date()},
@@ -24,15 +35,7 @@ export default function ChatRoom() {
 
     return (
         <main className={style.main}>
-            <div className={style.header}>
-                <BackButton/>
-                <div><h2>{user.nickname}</h2></div>
-            </div>
-            <Link href={user.nickname} className={style.userInfo}>
-                <img src={user.Image} alt={user.id}/>
-                <div><b>{user.nickname}</b></div>
-                <div>@{user.id}</div>
-            </Link>
+            <UserInfo id={ids[0]}/>
             <div className={style.list}>
                 {messages.map((m) => {
                     if (m.id === 'shinjung') { // 내 메시지일 때
@@ -55,6 +58,7 @@ export default function ChatRoom() {
                     );
                 })}
             </div>
+            <MessageForm/>
         </main>
     );
 }
