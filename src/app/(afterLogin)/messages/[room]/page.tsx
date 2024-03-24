@@ -1,5 +1,4 @@
 import style from "./chatRoom.module.css";
-import cx from "classnames";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -9,6 +8,7 @@ import {auth} from "@/auth";
 import {QueryClient} from "@tanstack/react-query";
 import UserInfo from "@/app/(afterLogin)/messages/[room]/_component/UserInfo";
 import WebSocketComponent from "@/app/(afterLogin)/messages/[room]/_component/WebSocketComponent";
+import MessageList from "@/app/(afterLogin)/messages/[room]/_component/MessageList";
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime)
@@ -38,28 +38,7 @@ export default async function ChatRoom({params}: Props) {
         <main className={style.main}>
             <WebSocketComponent/>
             <UserInfo id={ids[0]}/>
-            <div className={style.list}>
-                {messages.map((m) => {
-                    if (m.id === 'shinjung') { // 내 메시지일 때
-                        return (
-                            <div
-                                key={m.messageId}
-                                className={cx(style.message, style.myMessage)}>
-                                <div className={style.content}>{m.content}</div>
-                                <div className={style.date}>{dayjs(m.createdAt).format('YYYY년 MM월 DD일 A HH시 mm분')}</div>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div
-                            key={m.messageId}
-                            className={cx(style.message, style.yourMessage)}>
-                            <div className={style.content}>{m.content}</div>
-                            <div className={style.date}>{dayjs(m.createdAt).format('YYYY년 MM월 DD일 A HH시 mm분')}</div>
-                        </div>
-                    );
-                })}
-            </div>
+            <MessageList id={ids[0]}/>
             <MessageForm id={ids[0]}/>
         </main>
     );
