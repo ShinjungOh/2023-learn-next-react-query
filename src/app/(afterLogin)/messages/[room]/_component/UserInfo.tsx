@@ -12,7 +12,7 @@ type Props = {
 
 export default function UserInfo({id}: Props) {
     const {data: user} = useQuery({
-        queryKey: ['user', id],
+        queryKey: ['users', id],
         queryFn: getUser,
     });
 

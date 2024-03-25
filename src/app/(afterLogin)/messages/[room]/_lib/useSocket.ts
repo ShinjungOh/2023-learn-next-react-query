@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect} from "react";
 import {io, Socket} from "socket.io-client";
 import {useSession} from "next-auth/react";
 
@@ -13,7 +13,7 @@ export default function useSocket(): [Socket | null, () => void] {
 
     useEffect(() => {
         if (!socket) { // 중복 연결 방지
-            socket = io(`${process.env.NEXT_PUBLIC_BASE_URL}/massages`, {
+            socket = io(`${process.env.NEXT_PUBLIC_BASE_URL}/messages`, {
                 transports: ['websocket'],
             });
             socket.on('connect_error', (err) => {

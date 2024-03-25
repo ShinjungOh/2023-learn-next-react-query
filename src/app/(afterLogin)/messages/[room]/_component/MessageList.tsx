@@ -30,7 +30,6 @@ export default function MessageList({id}: Props) {
         hasPreviousPage,
         fetchPreviousPage,
         isFetching,
-        fetchNextPage,
     } = useInfiniteQuery<Message[], DefaultError, InfiniteData<Message[]>, [string, {
         senderId: string;
         receiverId: string;
@@ -38,14 +37,20 @@ export default function MessageList({id}: Props) {
         queryKey: ['rooms', {senderId: session?.user?.email!, receiverId: id}, 'messages'],
         queryFn: getMessages,
         initialPageParam: 0,
-        getPreviousPageParam: (firstPage) => firstPage.at(0)?.messageId,
-        getNextPageParam: (lastPage) => lastPage.at(-1)?.messageId,
+        getPreviousPageParam: (firstPage) => firstPage.length < 10 ? undefined : firstPage.at(0)?.messageId,
+        getNextPageParam: (lastPage) => lastPage.length < 10 ? undefined : lastPage.at(-1)?.messageId,
         enabled: !!(session?.user?.email && id),
     });
     const {ref, inView} = useInView({
         threshold: 0,
         delay: 0,
     });
+
+    useEffect(() => {
+        queryClient.resetQueries({
+            queryKey: ['rooms', {senderId: session?.user?.email!, receiverId: id}, 'messages'],
+        });
+    }, [queryClient, session?.user?.email, id]);
 
     useEffect(() => {
         if (inView) {
@@ -73,13 +78,12 @@ export default function MessageList({id}: Props) {
             console.log(listRef.current);
             setTimeout(() => {
                 if (listRef.current) {
-                    listRef.current.scrollTop = listRef.current.scrollHeight; // 스크롤 하단으로
+                    listRef.current.scrollTop = listRef.current?.scrollHeight; // 스크롤 하단으로
                 }
-                setPageRendered(true);
             }, 100);
+            setPageRendered(true);
         }
     }, [hasMessages]);
-
 
     useEffect(() => {
         if (shouldGoDown) {
@@ -101,14 +105,14 @@ export default function MessageList({id}: Props) {
             if (exMessages && typeof exMessages === 'object') {
                 const newMessages = {
                     ...exMessages,
-                    pages: {
+                    pages: [
                         ...exMessages.pages
-                    }
+                    ],
                 }
                 const lastPage = newMessages.pages.at(-1);
                 const newLastPage = lastPage ? [...lastPage] : [];
-                let lastMessageId = lastPage?.at(-1)?.messageId;
                 newLastPage.push(data);
+                newMessages.pages[newMessages.pages.length - 1] = newLastPage;
                 queryClient.setQueryData(['rooms', {
                     senderId: session?.user?.email,
                     receiverId: id
@@ -121,31 +125,29 @@ export default function MessageList({id}: Props) {
         }
     }, [socket]);
 
-
     return (
         <div className={style.list} ref={listRef}>
-            {!adjustingScroll && pageRendered && <div ref={ref} style={{height: 10}}/>}
+            {!adjustingScroll && pageRendered && <div ref={ref} style={{height: 1}}/>}
             {messages?.pages?.map((page) => page.map((m) => {
-                    if (m.senderId === session?.user?.email) { // 내 메시지일 때
-                        return (
-                            <div
-                                key={m.messageId}
-                                className={cx(style.message, style.myMessage)}>
-                                <div className={style.content}>{m.content}</div>
-                                <div className={style.date}>{dayjs(m.createdAt).format('YYYY년 MM월 DD일 A HH시 mm분')}</div>
-                            </div>
-                        );
-                    }
+                if (m.senderId === session?.user?.email) { // 내 메시지일 때
                     return (
                         <div
                             key={m.messageId}
-                            className={cx(style.message, style.yourMessage)}>
+                            className={cx(style.message, style.myMessage)}>
                             <div className={style.content}>{m.content}</div>
                             <div className={style.date}>{dayjs(m.createdAt).format('YYYY년 MM월 DD일 A HH시 mm분')}</div>
                         </div>
                     );
                 }
-            ))}
+                return (
+                    <div
+                        key={m.messageId}
+                        className={cx(style.message, style.yourMessage)}>
+                        <div className={style.content}>{m.content}</div>
+                        <div className={style.date}>{dayjs(m.createdAt).format('YYYY년 MM월 DD일 A HH시 mm분')}</div>
+                    </div>
+                );
+            }))}
         </div>
     );
 }

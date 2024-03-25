@@ -2,7 +2,7 @@
 
 import style from './messageForm.module.css';
 import TextareaAutosize from "react-textarea-autosize";
-import {ChangeEventHandler, FormEventHandler, useEffect, useState} from "react";
+import {ChangeEventHandler, KeyboardEventHandler, useState} from "react";
 import useSocket from "@/app/(afterLogin)/messages/[room]/_lib/useSocket";
 import {useSession} from "next-auth/react";
 import {InfiniteData, useQueryClient} from "@tanstack/react-query";
@@ -24,8 +24,7 @@ export default function MessageForm({id}: Props) {
         setContent(e.target.value);
     }
 
-    const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-        e.preventDefault();
+    const onSubmit = () => {
         if (!session?.user?.email) {
             return;
         }
@@ -59,9 +58,8 @@ export default function MessageForm({id}: Props) {
                 room: ids.join('-'),
                 messageId: lastMessageId ? lastMessageId + 1 : 1,
                 createdAt: new Date(),
-            })
+            });
             newMessages.pages[newMessages.pages.length - 1] = newLastPage;
-            setGoDown(true);
             queryClient.setQueryData(['rooms', {
                 senderId: session?.user?.email,
                 receiverId: id
@@ -71,10 +69,29 @@ export default function MessageForm({id}: Props) {
         setContent('');
     }
 
+    const onEnter: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+        console.log(e.key === 'Enter', e);
+
+        if (e.key === 'Enter') {
+            if (e.shiftKey) {
+                return;
+            }
+            e.preventDefault();
+            if (!content?.trim()) {
+                return;
+            }
+            onSubmit();
+            setContent('');
+        }
+    }
+
     return (
         <div className={style.formZone}>
-            <form className={style.form} onSubmit={onSubmit}>
-                <TextareaAutosize value={content} onChange={onChangeContent} placeholder="새 쪽지 작성하기"/>
+            <form className={style.form} onSubmit={(e) => {
+                e.preventDefault();
+                onSubmit();
+            }}>
+                <TextareaAutosize value={content} onChange={onChangeContent} onKeyDown={onEnter} placeholder="새 쪽지 작성하기"/>
                 <button className={style.submitButton} type="submit" disabled={!content?.trim()}>
                     <svg viewBox="0 0 24 24" width={18} aria-hidden="true"
                          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-z80fyv r-19wmn03">
