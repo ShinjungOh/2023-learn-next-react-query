@@ -7,6 +7,7 @@ import useSocket from "@/app/(afterLogin)/messages/[room]/_lib/useSocket";
 import {useSession} from "next-auth/react";
 import {InfiniteData, useQueryClient} from "@tanstack/react-query";
 import {Message} from "@/model/Message";
+import {useMessageStore} from "@/store/message";
 
 type Props = {
     id: string;
@@ -17,6 +18,7 @@ export default function MessageForm({id}: Props) {
     const [socket] = useSocket();
     const {data: session} = useSession();
     const queryClient = useQueryClient();
+    const setGoDown = useMessageStore().setGoDown;
 
     const onChangeContent: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
         setContent(e.target.value);
@@ -43,37 +45,31 @@ export default function MessageForm({id}: Props) {
         if (exMessages && typeof exMessages === 'object') {
             const newMessages = {
                 ...exMessages,
-                pages: {
-                    ...exMessages.pages
-                }
-            }
+                pages: [
+                    ...exMessages.pages,
+                ],
+            };
             const lastPage = newMessages.pages.at(-1);
             const newLastPage = lastPage ? [...lastPage] : [];
             let lastMessageId = lastPage?.at(-1)?.messageId;
             newLastPage.push({
-                senderId: session?.user?.email,
+                senderId: session.user.email,
                 receiverId: id,
                 content,
                 room: ids.join('-'),
                 messageId: lastMessageId ? lastMessageId + 1 : 1,
                 createdAt: new Date(),
             })
+            newMessages.pages[newMessages.pages.length - 1] = newLastPage;
+            setGoDown(true);
             queryClient.setQueryData(['rooms', {
                 senderId: session?.user?.email,
                 receiverId: id
             }, 'messages'], newMessages);
+            setGoDown(true);
         }
         setContent('');
     }
-
-    useEffect(() => {
-        socket?.on('receiveMessage', (data) => {
-            console.log('data', data);
-        });
-        return () => {
-            socket?.off('receiveMessage');
-        }
-    }, [socket]);
 
     return (
         <div className={style.formZone}>
