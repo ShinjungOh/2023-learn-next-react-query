@@ -1,4 +1,4 @@
-import styles from "@/app/(beforeLogin)/_component/main.module.css";
+import * as styles from "@/app/(beforeLogin)/_component/main.css";
 import Image from "next/image";
 import Link from "next/link";
 import zLogo from "../../../../public/zlogo.png";
@@ -7,7 +7,7 @@ export default function Main() {
     return (
         <>
             <div className={styles.left}>
-                <Image src={zLogo} alt="logo"/>
+                <Image className={styles.leftImage} src={zLogo} alt="logo"/>
             </div>
             <div className={styles.right}>
                 <h1>지금 일어나고 있는 일</h1>
